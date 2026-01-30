@@ -5,7 +5,7 @@ use std::{
 };
 
 use crate::error::Error;
-use crate::jsonrpc::minreq_http::Builder;
+use crate::jsonrpc::bitreq_http::Builder;
 use corepc_types::{
     bitcoin::{
         block::Header, consensus::encode::deserialize_hex, Block, BlockHash, Transaction, Txid,
@@ -94,10 +94,8 @@ impl Client {
             }
         };
 
-        let transport = builder.build();
-
         Ok(Self {
-            inner: jsonrpc::Client::with_transport(transport),
+            inner: jsonrpc::Client::with_transport(builder.build()),
         })
     }
 

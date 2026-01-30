@@ -111,7 +111,7 @@ fn test_invalid_cookie_file() {
 
 #[test]
 fn test_client_with_custom_transport() {
-    use jsonrpc::http::minreq_http::Builder;
+    use jsonrpc::http::bitreq_http::Builder;
 
     let (_, node) = setup();
 
