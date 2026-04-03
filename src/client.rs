@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use std::{
     fs::File,
     io::{BufRead, BufReader},
@@ -8,15 +10,14 @@ use crate::error::Error;
 use crate::jsonrpc::bitreq_http::Builder;
 use corepc_types::{
     bitcoin::{
-        block::Header, consensus::encode::deserialize_hex, Block, BlockHash, Transaction, Txid,
+        Block, BlockHash, Transaction, Txid, block::Header, consensus::encode::deserialize_hex,
     },
     model::{GetBlockCount, GetBlockFilter, GetRawMempool},
     v30,
 };
 use jsonrpc::{
-    serde,
+    Transport, serde,
     serde_json::{self, json},
-    Transport,
 };
 
 #[cfg(feature = "28_0")]

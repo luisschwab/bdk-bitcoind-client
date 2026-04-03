@@ -1,6 +1,8 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 use bdk_bitcoind_client::{Auth, Client};
 use bitcoin::{Address, BlockHash};
-use corepc_node::{exe_path, Conf, Node};
+use corepc_node::{Conf, Node, exe_path};
 use corepc_types::bitcoin;
 
 /// Test environment for running integration tests.

@@ -1,3 +1,5 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 //! Bitcoin Core RPC client library.
 //!
 //! This crate provides a Rust client for interacting with Bitcoin Core's JSON-RPC interface.
