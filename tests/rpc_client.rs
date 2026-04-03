@@ -4,9 +4,10 @@
 //!
 //! These tests require a running Bitcoin Core node in regtest mode. To setup, refer to [`corepc_node`].
 
+use core::str::FromStr;
+
 use bdk_bitcoind_client::{Auth, Client, Error};
 use corepc_types::bitcoin::{Amount, BlockHash, Txid};
-use std::str::FromStr;
 
 mod testenv;
 
