@@ -1,100 +1,51 @@
-on: [push, pull_request]
-
 name: CI
 
+on: [push, pull_request]
 permissions: {}
-
 env:
   CARGO_TERM_COLOR: always
   RUST_BACKTRACE: 1
 
 jobs:
-  fmt:
-    name: Rust fmt
+  check:
+    name: Check
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # v1
-        with:
-          toolchain: stable
-          components: rustfmt
-          cache: true
 
-      - name: Check fmt
-        run: cargo fmt --all -- --check
+      - name: Install just
+        uses: extractions/setup-just@f8a3cce218d9f83db3a2ecd90e41ac3de6cdfd9b # v3
 
-  # Clippy lints
-  clippy:
-    name: Clippy (${{ matrix.features }})
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        features:
-          - --no-default-features
-          - --all-features
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          persist-credentials: false
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # v1
-        with:
-          toolchain: stable
-          components: clippy
-          cache: true
+      - name: Setup cargo-rbmt
+        uses: rust-bitcoin/rust-bitcoin-maintainer-tools/.github/actions/setup-rbmt@6560b728ae6a81af9d92713b630ba26772fbd970
 
-      - name: Run Clippy
-        run: cargo clippy ${{ matrix.features }} --all-targets -- -D warnings
+      - name: Check check
+        run: just check
 
-  # Build and test 
   test:
-    name: Test (stable, ${{ matrix.features }})
+    name: Test - ${{ matrix.toolchain }} toolchain, ${{ matrix.lockfile }} deps
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
-        features:
-          - --no-default-features
-          - --all-features
+        toolchain: [stable, msrv]
+        lockfile: [minimal, recent]
+        exclude:
+          # Exclude MSRV toolchain + `Cargo-recent.lock`
+          - toolchain: msrv
+            lockfile: recent
+
     steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
+      - name: Checkout repository
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # v1
-        with:
-          toolchain: stable
-          cache: true
 
-      - name: Build
-        run: cargo build ${{ matrix.features }} --verbose
+      - name: Setup cargo-rbmt
+        uses: rust-bitcoin/rust-bitcoin-maintainer-tools/.github/actions/setup-rbmt@6560b728ae6a81af9d92713b630ba26772fbd970
 
-      - name: Run unit tests
-        run: cargo test ${{ matrix.features }} --lib --verbose
-
-      - name: Run doc tests
-        run: cargo test ${{ matrix.features }} --doc --verbose
-
-      - name: Run RPC client tests
-        run: cargo test --test test_rpc_client --verbose -- --test-threads=2
-
-  # MSRV
-  msrv:
-    name: MSRV
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6
-        with:
-          persist-credentials: false
-      - name: Install Rust toolchain
-        uses: actions-rust-lang/setup-rust-toolchain@1780873c7b576612439a134613cc4cc74ce5538c # v1
-        with:
-          toolchain: 1.75.0
-          cache: true
-
-      - name: Check MSRV
-        run: cargo check --all-features
+      - name: Run tests
+        run: cargo rbmt test --toolchain ${{ matrix.toolchain }} --lock-file ${{ matrix.lockfile }}
