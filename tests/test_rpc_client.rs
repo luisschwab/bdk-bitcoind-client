@@ -3,6 +3,7 @@
 //! These tests require a running Bitcoin Core node in regtest mode. To setup refer to [`corepc_node`].
 
 use bdk_bitcoind_client::{Auth, Client, Error};
+use corepc_node::Conf;
 use corepc_types::bitcoin::{Amount, BlockHash, Txid};
 use std::str::FromStr;
 
@@ -305,4 +306,37 @@ fn test_get_block_filter() {
         .expect("failed to get block filter");
 
     assert!(!result.filter.is_empty());
+}
+
+#[test]
+fn test_get_prune_height() {
+    // Spawn an unpruned node.
+    let env_unpruned = TestEnv::new();
+
+    // Assert that `getblockchaininfo.pruned` is `None`.
+    let unpruned_res = env_unpruned.client.get_prune_height().unwrap();
+    assert_eq!(unpruned_res, None);
+
+    // Spawn a node with manual pruning enabled.
+    let mut node_config = Conf::default();
+    node_config.args.push("-prune=1");
+    node_config.args.push("-fastprune");
+    let env_pruned = TestEnv::new_with_config(&node_config);
+
+    // Mine 1000 blocks.
+    let block_count = 1000;
+    let _hashes = env_pruned.mine_blocks(block_count as usize, None);
+
+    // Assert that `getblockchaininfo.pruned` is `Some(0)`.
+    let pruned_res = env_pruned.client.get_prune_height().unwrap();
+    assert_eq!(pruned_res, Some(0));
+
+    // Prune the last 2 blocks.
+    let _ = env_pruned.corepc_client.prune_blockchain(block_count - 2);
+
+    // Assert that `getblockchaininfo.prunedheight` is > 0.
+    // Note: it's not possible to assert on a specific block height since Bitcoin Core
+    // prunes at the block file level (`blkXXXX.dat`), and not at block height level.
+    let pruned_res = env_pruned.client.get_prune_height().unwrap();
+    assert!(pruned_res > Some(0));
 }
