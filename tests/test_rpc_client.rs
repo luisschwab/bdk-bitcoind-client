@@ -12,7 +12,8 @@ use testenv::TestEnv;
 
 #[test]
 fn test_invalid_credentials() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
+
     let client = Client::with_auth(
         &env.node.rpc_url(),
         Auth::UserPass("wrong".to_string(), "credentials".to_string()),
@@ -28,7 +29,7 @@ fn test_invalid_credentials() {
 fn test_client_with_custom_transport() {
     use jsonrpc::http::bitreq_http::Builder;
 
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let rpc_url = env.node.rpc_url();
     let cookie = env
@@ -54,7 +55,7 @@ fn test_client_with_custom_transport() {
 
 #[test]
 fn test_get_block_count() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let block_count = env
         .client
@@ -66,7 +67,7 @@ fn test_get_block_count() {
 
 #[test]
 fn test_get_block_hash() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let _genesis_hash = env
         .client
@@ -76,21 +77,22 @@ fn test_get_block_hash() {
 
 #[test]
 fn test_get_block_hash_for_current_height() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let block_count = client.get_block_count().expect("failed to get block count");
+    let block_count = env
+        .client
+        .get_block_count()
+        .expect("failed to get block count");
 
-    let _block_hash = client
+    let _block_hash = env
+        .client
         .get_block_hash(block_count)
         .expect("failed to get block hash");
 }
 
 #[test]
 fn test_get_block_hash_invalid_height() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let result = env.client.get_block_hash(999_999_999);
 
@@ -99,17 +101,19 @@ fn test_get_block_hash_invalid_height() {
 
 #[test]
 fn test_get_best_block_hash() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let best_block_hash = client
+    let best_block_hash = env
+        .client
         .get_best_block_hash()
         .expect("failed to get best block hash");
 
-    let block_count = client.get_block_count().expect("failed to get block count");
-    let block_hash = client
+    let block_count = env
+        .client
+        .get_block_count()
+        .expect("failed to get block count");
+    let block_hash = env
+        .client
         .get_block_hash(block_count)
         .expect("failed to get block hash");
 
@@ -118,16 +122,15 @@ fn test_get_best_block_hash() {
 
 #[test]
 fn test_get_block() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let genesis_hash = client
+    let genesis_hash = env
+        .client
         .get_block_hash(0)
         .expect("failed to get genesis hash");
 
-    let block = client
+    let block = env
+        .client
         .get_block(&genesis_hash)
         .expect("failed to get block");
 
@@ -137,7 +140,7 @@ fn test_get_block() {
 
 #[test]
 fn test_get_block_after_mining() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let hashes = env.mine_blocks(1, None).expect("failed to mine block");
     let block_hash = hashes[0];
@@ -153,7 +156,7 @@ fn test_get_block_after_mining() {
 
 #[test]
 fn test_get_block_verbose() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let hashes = env.mine_blocks(1, None).expect("failed to mine block");
     let block_hash = hashes[0];
@@ -169,7 +172,7 @@ fn test_get_block_verbose() {
 
 #[test]
 fn test_get_block_invalid_hash() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let invalid_hash =
         BlockHash::from_str("0000000000000000000000000000000000000000000000000000000000000000")
@@ -182,16 +185,15 @@ fn test_get_block_invalid_hash() {
 
 #[test]
 fn test_get_block_header() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let genesis_hash = client
+    let genesis_hash = env
+        .client
         .get_block_hash(0)
         .expect("failed to get genesis hash");
 
-    let header = client
+    let header = env
+        .client
         .get_block_header(&genesis_hash)
         .expect("failed to get block header");
 
@@ -200,16 +202,15 @@ fn test_get_block_header() {
 
 #[test]
 fn test_get_block_header_verbose() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let genesis_hash = client
+    let genesis_hash = env
+        .client
         .get_block_hash(0)
         .expect("failed to get genesis hash");
 
-    let header = client
+    let header = env
+        .client
         .get_block_header_verbose(&genesis_hash)
         .expect("failed to get block header verbose");
 
@@ -218,7 +219,7 @@ fn test_get_block_header_verbose() {
 
 #[test]
 fn test_get_raw_mempool_empty() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let _hashes = env.mine_blocks(1, None).expect("failed to mine block");
 
@@ -231,7 +232,7 @@ fn test_get_raw_mempool_empty() {
 
 #[test]
 fn test_get_raw_mempool_with_transaction() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let _hashes = env.mine_blocks(101, None).expect("failed to mine block");
 
@@ -251,7 +252,7 @@ fn test_get_raw_mempool_with_transaction() {
 
 #[test]
 fn test_get_raw_transaction() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let _hashes = env.mine_blocks(1, None).expect("failed to mine block");
 
@@ -279,7 +280,7 @@ fn test_get_raw_transaction() {
 
 #[test]
 fn test_get_raw_transaction_invalid_txid() {
-    let env = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
     let fake_txid =
         Txid::from_str("0000000000000000000000000000000000000000000000000000000000000000").unwrap();
@@ -291,16 +292,15 @@ fn test_get_raw_transaction_invalid_txid() {
 
 #[test]
 fn test_get_block_filter() {
-    let TestEnv {
-        client,
-        node: _node,
-    } = TestEnv::setup().unwrap();
+    let env = TestEnv::new();
 
-    let genesis_hash = client
+    let genesis_hash = env
+        .client
         .get_block_hash(0)
         .expect("failed to get genesis hash");
 
-    let result = client
+    let result = env
+        .client
         .get_block_filter(&genesis_hash)
         .expect("failed to get block filter");
 
