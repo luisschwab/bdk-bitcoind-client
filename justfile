@@ -59,7 +59,7 @@ fmt:
 
 [doc: "Regenerate `Cargo-recent.lock` and `Cargo-minimal.lock`"]
 lock:
-    cargo +nightly rbmt lock
+    cargo rbmt lock
 
 [doc: "Verify the library builds with the MSRV toolchain (1.85.0)"]
 msrv:
