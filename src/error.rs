@@ -111,3 +111,19 @@ impl From<FromHexError> for Error {
         Error::DecodeHex(e)
     }
 }
+
+/// Extension methods for the client error type.
+impl Error {
+    /// Returns `true` if this is a "not found" error returned by `bitcoind`.
+    ///
+    /// `bitcoind` returns error code `-5` (`RPC_INVALID_ADDRESS_OR_KEY`)
+    /// whenever a requested block hash, transaction ID, address, or similar object
+    /// does not exist on the node.
+    pub fn is_not_found_error(&self) -> bool {
+        if let Error::JsonRpc(jsonrpc::Error::Rpc(rpc_err)) = self {
+            rpc_err.code == -5
+        } else {
+            false
+        }
+    }
+}
