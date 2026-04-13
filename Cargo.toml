@@ -21,12 +21,14 @@ default = ["30_0"]
 corepc-types = { version = "0.11.0", features = ["default"]}
 jsonrpc = { version = "0.19.0", features = ["bitreq_http"] }
 
+# These pins are needed for `Cargo-minimal.lock`:
+hex-conservative = { version = "0.2.1" } # blame: corepc-node
+
 [dev-dependencies]
 anyhow = { version = "1.0.66" }
 corepc-node = { version = "0.10.1", features = ["download", "29_0"] }
 
 # These pins are needed for `Cargo-minimal.lock`:
-hex-conservative = { version = "0.2.1" } # blame: corepc-node
 tar = { version = "0.4.43" } # blame: corepc-node
 filetime = { version = "0.2.8" } # blame: corepc-node
 log = { version = "0.4.14" } # blame: corepc-node
