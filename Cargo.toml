@@ -1,19 +1,15 @@
 [package]
-name = "bdk-bitcoind-client"
 version = "0.1.0"
-edition = "2021"
-rust-version = "1.75.0"
-homepage = "https://bitcoindevkit.org"
+name = "bdk_bitcoind_client"
+description = "A minimal `bitcoind` RPC client custom built for BDK"
+authors = ["Bitcoin Dev Kit Developers"]
 repository = "https://github.com/bitcoindevkit/bdk-bitcoind-client"
 documentation = "https://docs.rs/bdk-bitcoind-client"
-description = "A minimal production-ready bitcoind RPC client for Bitcoin Dev Kit."
+homepage = "https://bitcoindevkit.org"
 license = "MIT OR Apache-2.0"
-authors = ["Bitcoin Dev Kit Developers"]
 readme = "README.md"
-
-[dependencies]
-corepc-types = { version = "0.11.0", features = ["default"]}
-jsonrpc = { version = "0.19.0", features = ["simple_http", "simple_tcp", "bitreq_http", "simple_uds", "proxy"] }
+edition = "2024"
+rust-version = "1.85.0"
 
 [features]
 default = ["30_0"]
@@ -21,6 +17,31 @@ default = ["30_0"]
 29_0 = []
 28_0 = []
 
+[dependencies]
+corepc-types = { version = "0.12.0", features = ["default"]}
+jsonrpc = { version = "0.19.0", features = ["bitreq_http"] }
+
+# These pins are needed for `Cargo-minimal.lock`:
+hex-conservative = { version = "0.2.1" } # blame: corepc-node
+
 [dev-dependencies]
-anyhow = "1"
-corepc-node = { version = "0.10.1", features = ["download", "29_0"] }
+anyhow = { version = "1.0.66" }
+bitcoind = { version = "0.37.0", features = ["download", "29_0"] }
+
+# These pins are needed for `Cargo-minimal.lock`:
+tar = { version = "0.4.43" } # blame: corepc-node
+filetime = { version = "0.2.8" } # blame: corepc-node
+log = { version = "0.4.14" } # blame: corepc-node
+
+[package.metadata.rbmt.toolchains]
+stable = "1.94.1"
+nightly = "nightly-2026-03-18"
+
+[package.metadata.rbmt.test]
+#exclude_features = ["default"]
+
+# Allow multiple versions of the same package in the dependency tree.
+[package.metadata.rbmt.lint]
+allowed_duplicates = [
+    "base64",
+]

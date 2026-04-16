@@ -1,4 +1,10 @@
+// SPDX-License-Identifier: MIT OR Apache-2.0
+
 //! Error types for the Bitcoin RPC client.
+
+use core::fmt;
+use core::num::TryFromIntError;
+use std::io;
 
 use bitcoin::{consensus::encode::FromHexError, hex::HexToArrayError};
 #[cfg(feature = "28_0")]
@@ -7,7 +13,6 @@ use corepc_types::v17::{GetBlockHeaderVerboseError, GetBlockVerboseOneError};
 use corepc_types::v30::{GetBlockHeaderVerboseError, GetBlockVerboseOneError};
 use corepc_types::{bitcoin, v30::GetBlockFilterError};
 use jsonrpc::serde_json;
-use std::{fmt, io, num::TryFromIntError};
 
 /// Result type alias for the RPC client.
 pub type Result<T> = std::result::Result<T, Error>;
@@ -67,7 +72,7 @@ impl fmt::Display for Error {
     }
 }
 
-impl std::error::Error for Error {}
+impl core::error::Error for Error {}
 
 // Conversions from other error types
 impl From<jsonrpc::Error> for Error {
