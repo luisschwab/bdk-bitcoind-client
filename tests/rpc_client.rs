@@ -2,7 +2,7 @@
 
 //! Integration tests for the `bdk_bitcoind_client` [`Client`].
 //!
-//! These tests require a running Bitcoin Core node in regtest mode. To setup, refer to [`corepc_node`].
+//! These tests require a running Bitcoin Core node in regtest mode. To setup, refer to [`bitcoind`].
 
 use core::str::FromStr;
 
@@ -17,7 +17,7 @@ use testenv::TestEnv;
 fn test_invalid_credentials() {
     let env = TestEnv::setup().unwrap();
     let client = Client::with_auth(
-        &env.node.rpc_url(),
+        &env.bitcoind.rpc_url(),
         Auth::UserPass("wrong".to_string(), "credentials".to_string()),
     )
     .expect("client creation should succeed");
@@ -33,9 +33,9 @@ fn test_client_with_custom_transport() {
 
     let env = TestEnv::setup().unwrap();
 
-    let rpc_url = env.node.rpc_url();
+    let rpc_url = env.bitcoind.rpc_url();
     let cookie = env
-        .node
+        .bitcoind
         .params
         .get_cookie_values()
         .expect("Failed to read cookie")
@@ -81,7 +81,7 @@ fn test_get_block_hash() {
 fn test_get_block_hash_for_current_height() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let block_count = client.get_block_count().expect("failed to get block count");
@@ -104,7 +104,7 @@ fn test_get_block_hash_invalid_height() {
 fn test_get_best_block_hash() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let best_block_hash = client
@@ -123,7 +123,7 @@ fn test_get_best_block_hash() {
 fn test_get_block() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let genesis_hash = client
@@ -187,7 +187,7 @@ fn test_get_block_invalid_hash() {
 fn test_get_block_header() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let genesis_hash = client
@@ -205,7 +205,7 @@ fn test_get_block_header() {
 fn test_get_block_header_verbose() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let genesis_hash = client
@@ -238,9 +238,9 @@ fn test_get_raw_mempool_with_transaction() {
 
     let _hashes = env.mine_blocks(101, None).expect("failed to mine block");
 
-    let address = env.node.client.new_address().unwrap();
+    let address = env.bitcoind.client.new_address().unwrap();
     let txid = env
-        .node
+        .bitcoind
         .client
         .send_to_address(&address, Amount::from_btc(0.001).unwrap())
         .expect("failed to send to address")
@@ -296,7 +296,7 @@ fn test_get_raw_transaction_invalid_txid() {
 fn test_get_block_filter() {
     let TestEnv {
         client,
-        node: _node,
+        bitcoind: _bitcoind,
     } = TestEnv::setup().unwrap();
 
     let genesis_hash = client

@@ -26,7 +26,7 @@ hex-conservative = { version = "0.2.1" } # blame: corepc-node
 
 [dev-dependencies]
 anyhow = { version = "1.0.66" }
-corepc-node = { version = "0.10.1", features = ["download", "29_0"] }
+bitcoind = { version = "0.37.0", features = ["download", "29_0"] }
 
 # These pins are needed for `Cargo-minimal.lock`:
 tar = { version = "0.4.43" } # blame: corepc-node
@@ -38,7 +38,7 @@ stable = "1.94.1"
 nightly = "nightly-2026-03-18"
 
 [package.metadata.rbmt.test]
-exclude_features = ["default"]
+#exclude_features = ["default"]
 
 # Allow multiple versions of the same package in the dependency tree.
 [package.metadata.rbmt.lint]

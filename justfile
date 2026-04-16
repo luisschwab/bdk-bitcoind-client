@@ -38,12 +38,10 @@ check-sigs:
 [doc: "Generate documentation"]
 doc:
     cargo rbmt docs
-    cargo doc --no-deps
 
 [doc: "Generate and open documetation"]
 doc-open:
-    cargo rbmt docs
-    cargo doc --no-deps --open
+    cargo rbmt docs --open
 
 [doc: "Format code"]
 fmt:

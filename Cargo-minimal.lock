@@ -32,12 +32,6 @@ dependencies = [
 
 [[package]]
 name = "base64"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "904dfeac50f3cdaba28fc6f57fdcddb75f49ed61346676a78c4ffe55877802fd"
-
-[[package]]
-name = "base64"
 version = "0.21.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "414dcefbc63d77c526a76b3afcf6fbb9b5e2791c19c3aa2297733208750c6e53"
@@ -53,11 +47,11 @@ name = "bdk_bitcoind_client"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "corepc-node",
- "corepc-types 0.12.0",
+ "bitcoind",
+ "corepc-types",
  "filetime",
  "hex-conservative 0.2.1",
- "jsonrpc 0.19.0",
+ "jsonrpc",
  "log",
  "tar",
 ]
@@ -155,6 +149,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "bitcoind"
+version = "0.37.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1225c3fba5dd1ec5fab658a36b6bedfdebe0ce0fcf04c0f42c79849af77cfcc"
+dependencies = [
+ "anyhow",
+ "bitcoin_hashes 0.13.0",
+ "bitreq 0.3.0",
+ "corepc-client",
+ "flate2",
+ "log",
+ "serde_json",
+ "tar",
+ "tempfile",
+ "which",
+ "zip",
+]
+
+[[package]]
 name = "bitflags"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -174,6 +187,17 @@ checksum = "7c84f27ed293cb5218ab015faad9fbb95cf7905865ce71df075c8805a0b33b71"
 dependencies = [
  "serde",
  "serde_json",
+]
+
+[[package]]
+name = "bitreq"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6cdd1a33e915c66e68c47ad80b5b351d3106894461878a58f4d34a16e4ed662d"
+dependencies = [
+ "rustls",
+ "rustls-webpki 0.101.0",
+ "webpki-roots",
 ]
 
 [[package]]
@@ -229,44 +253,14 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "corepc-client"
-version = "0.10.0"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7755b8b9219b23d166a5897b5e2d8266cbdd0de5861d351b96f6db26bcf415f3"
+checksum = "dc0d0096927a820ea80d4a43a2355209d9a69ef5b420861bf413c7e667cbff0b"
 dependencies = [
  "bitcoin",
- "corepc-types 0.10.0",
- "jsonrpc 0.18.0",
+ "corepc-types",
+ "jsonrpc",
  "log",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "corepc-node"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "768391062ec3812e223bb3031c5b2fcdd6e0e60b816157f21df82fd3e6617dc0"
-dependencies = [
- "anyhow",
- "bitcoin_hashes 0.13.0",
- "corepc-client",
- "flate2",
- "log",
- "minreq",
- "serde_json",
- "tar",
- "tempfile",
- "which",
- "zip",
-]
-
-[[package]]
-name = "corepc-types"
-version = "0.10.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4e94b68cfbafce3a4f7a0d0f3553dedcf83586f71ddf16d737694915c28823b5"
-dependencies = [
- "bitcoin",
  "serde",
  "serde_json",
 ]
@@ -389,24 +383,12 @@ dependencies = [
 
 [[package]]
 name = "jsonrpc"
-version = "0.18.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3662a38d341d77efecb73caf01420cfa5aa63c0253fd7bc05289ef9f6616e1bf"
-dependencies = [
- "base64 0.13.0",
- "minreq",
- "serde",
- "serde_json",
-]
-
-[[package]]
-name = "jsonrpc"
 version = "0.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "629d2b4ae586d04b6bae3c75879d7ddd39325c2b67a9c87634f4ec88a488dc65"
 dependencies = [
  "base64 0.22.1",
- "bitreq",
+ "bitreq 0.2.0",
  "serde",
  "serde_json",
 ]
@@ -448,25 +430,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "minreq"
-version = "2.11.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb3371dfc7b772c540da1380123674a8e20583aca99907087d990ca58cf44203"
-dependencies = [
- "log",
- "once_cell",
- "rustls",
- "rustls-webpki 0.101.0",
- "serde",
- "serde_json",
- "webpki-roots",
-]
-
-[[package]]
 name = "once_cell"
-version = "1.14.0"
+version = "1.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f7254b99e31cad77da24b08ebf628882739a608578bb1bcdfc1f9c21260d7c0"
+checksum = "13bd41f508810a131401606d54ac32a467c97172d74ba7662562ebba5ad07fa0"
 
 [[package]]
 name = "pkg-config"
@@ -551,7 +518,6 @@ version = "0.21.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c911ba11bc8433e811ce56fde130ccf32f5127cab0e0194e9c68c5a5b671791e"
 dependencies = [
- "log",
  "ring",
  "rustls-webpki 0.100.0",
  "sct",
