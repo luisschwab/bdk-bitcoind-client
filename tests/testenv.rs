@@ -23,7 +23,7 @@ impl TestEnv {
     /// This will first look for the path of the `bitcoind` executable using [`bitcoind::exe_path`]
     /// before returning a new [`TestEnv`] with [`Client`] connected to it.
     ///
-    /// Note that [`Node`] also exposes its own RPC [`client`](Node::client) which may help with
+    /// Note that [`BitcoinD`] also exposes its own RPC [`client`](BitcoinD::client) which may help with
     /// creating different test cases, but be aware that this is different from the client we're
     /// actually testing.
     pub fn setup() -> anyhow::Result<Self> {
@@ -44,7 +44,7 @@ impl TestEnv {
     }
 
     /// Mines `nblocks` blocks to the given `address`, or an address controlled
-    /// by the [`Node`] if not provided.
+    /// by [`BitcoinD`] if not provided.
     pub fn mine_blocks(
         &self,
         nblocks: usize,
