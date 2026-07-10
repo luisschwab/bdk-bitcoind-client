@@ -64,5 +64,5 @@ test:
 test-version VERSION:
     cargo test --no-default-features --features {{VERSION}}
 
-[doc: "Run pre-push suite: lock, check-sigs, fmt, check, test, and msrv"]
-pre-push: lock check-sigs fmt check test msrv
+[doc: "Run pre-push suite: check-sigs, fmt, check, msrv, and test"]
+pre-push: check-sigs fmt check msrv test

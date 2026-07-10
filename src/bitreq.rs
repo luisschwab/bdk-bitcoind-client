@@ -8,6 +8,7 @@ use std::{
     fs::File,
     io::{BufRead, BufReader},
     path::PathBuf,
+    time::Duration,
 };
 
 use corepc_types::{
@@ -27,6 +28,9 @@ use crate::{Error, Rpc};
 
 #[cfg(all(feature = "28_0", not(feature = "29_0")))]
 pub mod v28;
+
+/// Request timeout to be used by default if not specified.
+const DEFAULT_TIMEOUT: Duration = Duration::from_secs(15);
 
 /// Authentication methods for the Bitcoin Core JSON-RPC server.
 #[derive(Clone, Debug, Hash, Eq, PartialEq, Ord, PartialOrd)]
@@ -73,16 +77,21 @@ impl std::fmt::Debug for Client {
 }
 
 impl Client {
-    /// Creates a client connected to a Bitcoin Core RPC server with authentication and timeout.
+    /// Creates a client connected to a Bitcoin Core RPC server with `auth`.
     ///
     /// # Errors
     ///
     /// Returns an error if the URL is invalid or the cookie file cannot be read.
-    pub fn with_auth_timeout(
-        url: &str,
-        auth: Auth,
-        timeout: core::time::Duration,
-    ) -> Result<Self, Error> {
+    pub fn with_auth(url: &str, auth: Auth) -> Result<Self, Error> {
+        Self::with_auth_timeout(url, auth, DEFAULT_TIMEOUT)
+    }
+
+    /// Creates a client connected to a Bitcoin Core RPC server with `auth` and `timeout`.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the URL is invalid or the cookie file cannot be read.
+    pub fn with_auth_timeout(url: &str, auth: Auth, timeout: Duration) -> Result<Self, Error> {
         let mut builder = bitreq_http::Builder::new()
             .url(url)
             .map_err(|e| Error::InvalidUrl(format!("{e}")))?
