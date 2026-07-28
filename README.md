@@ -26,22 +26,20 @@ headers and mempool. Interpreting this data is left to wallets that use this cra
 
 ## Usage
 
-Add this to your `Cargo.toml` manifest to use this crate with
-the latest Bitcoin Core version (currently v30.0) as the backend:
+Add this to your `Cargo.toml` manifest to use this crate with the default Bitcoin Core version v28.0 as the backend:
 
 ```toml
-bdk-bitcoind-client = { version = "0.1.0" }
+bdk-bitcoind-client = { version = "0.2.0" }
 ```
 
-Alternatively, add this to your `Cargo.toml` manifest to use this crate
-with a specific Bitcoin Core version as the backend (v28.0 or v29.0):
+Alternatively, add this to your `Cargo.toml` manifest to use this crate with a specific Bitcoin Core version as the backend (v29.0 or v30.0):
 
 ```toml
 # Bitcoin Core v29.0
-bdk-bitcoind-client = { version = "0.1.0", default-features = false, features = ["29_0"] }
+bdk-bitcoind-client = { version = "0.2.0", default-features = false, features = ["29_0"] }
 
-# Bitcoin Core v28.0
-bdk-bitcoind-client = { version = "0.1.0", default-features = false, features = ["28_0"] }
+# Bitcoin Core v30.0
+bdk-bitcoind-client = { version = "0.2.0", default-features = false, features = ["30_0"] }
 ```
 
 ## Quick Start
@@ -80,9 +78,9 @@ This crate manages this via compile-time feature flags:
 
 | Feature Flag     | Bitcoin Core Version | Notes                                                        |
 | ---------------- | -------------------- | ------------------------------------------------------------ |
-| `30_0` (default) | v30.x                |                                                              |
+| `30_0`           | v30.x                |                                                              |
 | `29_0`           | v29.x                | Supports `target` and `difficulty` fields on `getmininginfo` |
-| `28_0`           | v28.x and older      | Omits newer fields                                           |
+| `28_0` (default) | v28.x and older      | Omits newer fields                                           |
 
 
 ## Developing
