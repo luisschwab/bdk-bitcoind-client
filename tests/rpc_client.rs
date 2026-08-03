@@ -17,6 +17,21 @@ mod testenv;
 use testenv::TestEnv;
 
 #[test]
+fn test_custom_node_config() {
+    let mut config = bitcoind::Conf::default();
+    config.args.push("-coinstatsindex=1");
+
+    let env = TestEnv::setup_with_config(&config).unwrap();
+    let index_info = env
+        .bitcoind
+        .client
+        .get_index_info()
+        .expect("failed to get index info");
+
+    assert!(index_info.0.contains_key("coinstatsindex"));
+}
+
+#[test]
 fn test_invalid_credentials() {
     let env = TestEnv::setup().unwrap();
     let client = Client::with_auth_timeout(
