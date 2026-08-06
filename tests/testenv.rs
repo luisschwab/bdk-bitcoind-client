@@ -18,7 +18,25 @@ pub struct TestEnv {
 }
 
 impl TestEnv {
-    /// Create new [`TestEnv`].
+    /// Create a new [`TestEnv`] with the default [`Conf`].
+    ///
+    /// This will first look for the path of the `bitcoind` executable using [`bitcoind::exe_path`]
+    /// before returning a new [`TestEnv`] with a [`Client`] connected to it.
+    ///
+    /// Note that [`BitcoinD`] also exposes its own RPC [`client`](BitcoinD::client) which may help with
+    /// creating different test cases, but be aware that this is different from the client we're
+    /// actually testing.
+    pub fn setup() -> anyhow::Result<Self> {
+        let mut conf = Conf::default();
+
+        // Enable `blockfilterindex` and `txindex` by default.
+        conf.args.push("-blockfilterindex=1");
+        conf.args.push("-txindex=1");
+
+        Self::setup_with_config(&conf)
+    }
+
+    /// Create a new [`TestEnv`] with a custom [`Conf`].
     ///
     /// This will first look for the path of the `bitcoind` executable using [`bitcoind::exe_path`]
     /// before returning a new [`TestEnv`] with [`Client`] connected to it.
@@ -26,14 +44,9 @@ impl TestEnv {
     /// Note that [`BitcoinD`] also exposes its own RPC [`client`](BitcoinD::client) which may help with
     /// creating different test cases, but be aware that this is different from the client we're
     /// actually testing.
-    pub fn setup() -> anyhow::Result<Self> {
+    pub fn setup_with_config(config: &Conf) -> anyhow::Result<Self> {
         let exe = exe_path()?;
-
-        let mut conf = Conf::default();
-        conf.args.push("-blockfilterindex=1");
-        conf.args.push("-txindex=1");
-
-        let bitcoind = BitcoinD::with_conf(exe, &conf)?;
+        let bitcoind = BitcoinD::with_conf(exe, config)?;
 
         let rpc_url = bitcoind.rpc_url();
         let cookie_file = &bitcoind.params.cookie_file;
